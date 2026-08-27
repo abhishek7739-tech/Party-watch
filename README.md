@@ -16,6 +16,23 @@ npm.cmd run build
 $env:PORT=3001; npm.cmd start
 ```
 
+## Vercel deployment
+
+Vercel can host the Vite frontend, but it cannot host this app's persistent Socket.IO server. Deploy the `server/` process to a persistent Node host such as Render, Railway, Fly.io, or a VPS, using `npm start` as its start command.
+
+Configure these environment variables before building/deploying:
+
+```text
+# In Vercel (the frontend build environment)
+VITE_SOCKET_URL=https://your-backend.example.com
+
+# On the backend host
+CLIENT_ORIGIN=https://your-vercel-project.vercel.app
+PORT=3001
+```
+
+`VITE_SOCKET_URL` is embedded into the client during the Vite build, so trigger a new Vercel deployment after setting or changing it. Copy `.env.example` to `.env` locally if you want to test against a remote backend.
+
 ## Features
 
 - Host-created six-character private rooms, with a 10-user room limit.

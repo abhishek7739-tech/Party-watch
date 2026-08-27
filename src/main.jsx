@@ -4,7 +4,10 @@ import { io } from 'socket.io-client';
 import './styles.css';
 import './layout-overrides.css';
 
-const socket = io({ autoConnect: false });
+// Leave this unset in development to use Vite's /socket.io proxy. In production,
+// VITE_SOCKET_URL must point to the separately deployed Socket.IO server.
+const socketServerUrl = import.meta.env.VITE_SOCKET_URL?.trim().replace(/\/$/, '') || undefined;
+const socket = io(socketServerUrl, { autoConnect: false });
 const initialForm = { name: localStorage.getItem('watchwave-name') || '', title: 'Friday movie night', code: '' };
 
 
