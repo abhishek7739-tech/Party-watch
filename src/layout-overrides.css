@@ -1,0 +1,11 @@
+/* Keep the room card near the top of the landing page on taller displays. */
+.join-card {
+  align-self: start;
+  margin-top: clamp(32px, 7vh, 92px);
+}
+
+@media (max-width: 850px) {
+  .join-card {
+    margin-top: 0;
+  }
+}
