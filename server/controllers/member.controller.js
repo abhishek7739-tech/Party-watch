@@ -7,7 +7,7 @@ function updateRole(io, socket, payload) {
   const member = roomService.memberForSocket(socket, room);
   const target = room?.members.get(payload?.id);
   if (!room || member?.role !== ROLES.HOST || !target || !ROLE_VALUES.has(payload?.role) || payload.role === ROLES.HOST) return emitRoomError(socket, 'Only the host can update roles.');
-  target.ro1le = payload.role; emitRoomState(io, room);
+  target.role = payload.role; emitRoomState(io, room);
 }
 function transferHost(io, socket, payload) {
   const room = roomService.roomForSocket(socket); 
