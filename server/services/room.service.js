@@ -79,7 +79,8 @@ function publicRoom(room) {
 
 /** Apply a host/moderator play, pause, or seek action. */
 function updatePlayback(room, { action, currentTime }) {
-  room.currentTime = Math.max(0, Number(currentTime) || 0);
+  const requestedTime = Number(currentTime);
+  room.currentTime = Number.isFinite(requestedTime) ? Math.max(0, requestedTime) : currentPlayback(room).currentTime;
 
   if (action === 'play') room.isPlaying = true;
   if (action === 'pause') room.isPlaying = false;

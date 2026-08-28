@@ -5,7 +5,7 @@ import * as memberController from '../controllers/member.controller.js';
 
 function registerSocketHandlers(io) {
   io.on('connection', (socket) => {
-    socket.on('room:create', (payload, acknowledge) => roomEvents.createRoom(socket, payload, acknowledge));
+    socket.on('room:create', (payload, acknowledge) => roomEvents.createRoom(io, socket, payload, acknowledge));
     socket.on('room:join', (payload, acknowledge) => roomEvents.joinRoom(io, socket, payload, acknowledge));
     socket.on('playback:action', (payload) => playbackController.changePlayback(io, socket, payload));
     socket.on('video:set', (payload) => playbackController.changeVideo(io, socket, payload));

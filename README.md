@@ -4,6 +4,14 @@ A real-time YouTube watch party built with React, Socket.IO, and an authoritativ
 
 ## Run locally
 
+Create `.env` with a valid MongoDB connection string and JWT signing secret before starting the server:
+
+```text
+MONGODB_URI=mongodb+srv://<user>:<password>@<cluster>/<database>
+JWT_SECRET=replace-with-a-long-random-secret
+PORT=3001
+```
+
 ```powershell
 npm.cmd install
 npm.cmd run dev
@@ -38,7 +46,7 @@ PORT=3001
 
 ## Features
 
-- Host-created six-character private rooms, with a 10-user room limit.
+- Account-authenticated, host-created six-character private rooms, with a 10-user room limit.
 - Synced YouTube video changes, play, pause, seek and late-join playback state.
 - Four roles: host, moderator, participant and viewer. Hosts can promote/demote members; hosts and moderators control playback.
 - Live in-room chat with server-side length limits and basic input sanitization.

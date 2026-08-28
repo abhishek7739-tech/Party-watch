@@ -5,9 +5,10 @@ import { cleanText } from '../utils/text.js';
 const emitRoomState = (io, room) => io.to(room.code).emit('room:state', roomService.publicRoom(room));
 const emitRoomError = (socket, message) => socket.emit('room:error', message);
 
-function createRoom(socket, payload, acknowledge) {
+function createRoom(io, socket, payload, acknowledge) {
   const name = socket.data.user?.name;
   if (!name) return acknowledge?.({ error: 'Please log in before joining or creating a party.' });
+  leaveRoom(io, socket);
   const room = roomService.createRoom({ title: cleanText(payload?.title, 60) || 'Movie night', videoId: payload?.videoId || '' });
   roomService.addMember(room, { id: socket.id, name, role: ROLES.HOST });
   socket.join(room.code); socket.data.roomCode = room.code;
@@ -19,7 +20,9 @@ function joinRoom(io, socket, payload, acknowledge) {
   const room = roomService.findRoom(code);
   if (!room) return acknowledge?.({ error: 'That party does not exist or has ended.' });
   if (!name) return acknowledge?.({ error: 'Please log in before joining or creating a party.' });
+  if (socket.data.roomCode === code) return acknowledge?.({ room: roomService.publicRoom(room), selfId: socket.id });
   if (roomService.isFull(room)) return acknowledge?.({ error: 'This party is full.' });
+  leaveRoom(io, socket);
   roomService.addMember(room, { id: socket.id, name }); socket.join(code); socket.data.roomCode = code;
   emitRoomState(io, room); acknowledge?.({ room: roomService.publicRoom(room), selfId: socket.id });
 }

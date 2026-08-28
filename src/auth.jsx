@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 
 export default function Auth({ apiServerUrl, onAuthenticated }) {
   const [mode, setMode] = useState('login');
@@ -10,8 +10,16 @@ export default function Auth({ apiServerUrl, onAuthenticated }) {
     event.preventDefault(); setError(''); setLoading(true);
     try {
       const response = await fetch(`${apiServerUrl}/api/auth/${mode}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || 'Unable to continue.');
+      const body = await response.text();
+      let data = {};
+      try { data = body ? JSON.parse(body) : {}; } catch { /* Handle proxy and server responses that are not JSON. */ }
+      if (!response.ok) {
+        const fallback = response.status >= 500
+          ? 'The party server is unavailable. Please try again shortly.'
+          : 'Unable to continue. Please check your details and try again.';
+        throw new Error(data.error || fallback);
+      }
+      if (!data.token) throw new Error('The party server returned an invalid sign-in response.');
       onAuthenticated(data);
     } catch (requestError) { setError(requestError.message); }
     finally { setLoading(false); }
