@@ -3,23 +3,27 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "scripts": { 
-    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"", 
-    "dev:client": "vite", 
-    "dev:server": "node server/index.js", 
-    "build": "vite build", 
-    "start": "node server/index.js" 
+  "scripts": {
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:client": "vite",
+    "dev:server": "node server/index.js",
+    "build": "vite build",
+    "start": "node server/index.js"
   },
   "dependencies": {
-    "@vitejs/plugin-react": "latest", 
-    "express": "latest", 
-    "react": "latest", 
-    "react-dom": "latest", 
-    "socket.io": "latest", 
-    "socket.io-client": "latest" 
+    "@vitejs/plugin-react": "latest",
+    "bcryptjs": "^3.0.3",
+    "dotenv": "^17.4.2",
+    "express": "latest",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.9.4",
+    "react": "latest",
+    "react-dom": "latest",
+    "socket.io": "latest",
+    "socket.io-client": "latest"
   },
-  "devDependencies": { 
-    "concurrently": "latest", 
-    "vite": "latest" 
+  "devDependencies": {
+    "concurrently": "latest",
+    "vite": "latest"
   }
 }

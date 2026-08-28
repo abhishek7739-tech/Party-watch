@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { io } from 'socket.io-client';
 import './styles.css';
 import './layout-overrides.css';
+import Auth from './auth.jsx';
 
 // Leave this unset in development to use Vite's /socket.io proxy. In production,
 // VITE_SOCKET_URL must point to the separately deployed Socket.IO server.
@@ -138,7 +139,8 @@ function Room({ room, selfId, notify, leave }) {
 function Members({ members, self, canManage }) { return <div className="members"><div className="side-title">IN THE ROOM <span>{members.length}</span></div>{members.map((member) => <div className="member" key={member.id}><div className="avatar">{member.name[0]?.toUpperCase()}</div><div><b>{member.name}{member.id === self?.id && ' (you)'}</b><small>{member.role}</small></div>{canManage && member.id !== self?.id && member.role !== 'host' && <select value={member.role} onChange={(e) => e.target.value === 'host' ? socket.emit('member:transfer', { id: member.id }) : socket.emit('member:role', { id: member.id, role: e.target.value })}><option value="moderator">Moderator</option><option value="participant">Participant</option><option value="viewer">Viewer</option><option value="host">Transfer host</option></select>}</div>)}</div>; }
 
 function App() {
-  const [room, setRoom] = useState(null); 
+  const [room, setRoom] = useState(null);
+  const [session, setSession] = useState(() => { try { return JSON.parse(localStorage.getItem('watchwave-session')); } catch { return null; } }); 
   const [selfId, setSelfId] = useState(null); 
   const [error, setError] = useState(''); 
   const [loading, setLoading] = useState(false); 
@@ -153,6 +155,8 @@ function App() {
   }, []);
 
   const submit = (mode, form) => { 
+    if (!session?.token) return;
+    socket.auth = { token: session.token };
     setError(''); setLoading(true); 
     socket.connect(); socket.emit(mode === 'create' ? 'room:create' : 'room:join', mode === 'create' ? form : { name: form.name, code: form.code }, (response) => { setLoading(false); 
     if (response?.error) return setError(response.error); 
@@ -161,10 +165,12 @@ function App() {
    }); 
   };
 
+  const authenticate = (next) => { localStorage.setItem('watchwave-session', JSON.stringify(next)); setSession(next); };
   const leave = () => { 
     socket.disconnect(); 
     setRoom(null); 
     setSelfId(null); };
+  if (!session?.token) return <Auth onAuthenticated={authenticate} />;
   return <>{room ? <Room room={room} selfId={selfId} notify={setNotice} leave={leave} /> : <Landing submit={submit} error={error || notice} loading={loading} />}{notice && room && <button className="toast" onClick={() => setNotice('')}>{notice} ×</button>}</>;
 }
 createRoot(document.getElementById('root')).render(<App />);
