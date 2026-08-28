@@ -25,6 +25,9 @@ Configure these environment variables before building/deploying:
 ```text
 # In Vercel (the frontend build environment)
 VITE_SOCKET_URL=https://your-backend.example.com
+# Optional when the API and Socket.IO server use different hosts. When omitted,
+# the client uses VITE_SOCKET_URL for both.
+VITE_API_URL=https://your-backend.example.com
 
 # On the backend host
 CLIENT_ORIGIN=https://your-vercel-project.vercel.app

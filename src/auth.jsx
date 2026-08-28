@@ -1,6 +1,6 @@
 ﻿import React, { useState } from 'react';
 
-export default function Auth({ onAuthenticated }) {
+export default function Auth({ apiServerUrl, onAuthenticated }) {
   const [mode, setMode] = useState('login');
   const [form, setForm] = useState({ name: '', email: '', password: '' });
   const [error, setError] = useState('');
@@ -9,7 +9,7 @@ export default function Auth({ onAuthenticated }) {
   const submit = async (event) => {
     event.preventDefault(); setError(''); setLoading(true);
     try {
-      const response = await fetch(`/api/auth/${mode}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) });
+      const response = await fetch(`${apiServerUrl}/api/auth/${mode}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Unable to continue.');
       onAuthenticated(data);
